@@ -8,6 +8,7 @@ const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const ws_1 = require("ws");
 const config_1 = require("./config");
+const authStore_1 = require("./store/authStore");
 const deviceRoutes_1 = require("./routes/deviceRoutes");
 const configRoutes_1 = require("./routes/configRoutes");
 const repoRoutes_1 = require("./routes/repoRoutes");
@@ -15,10 +16,42 @@ const apkRoutes_1 = require("./routes/apkRoutes");
 const authRoutes_1 = require("./routes/authRoutes");
 const deviceStore_1 = require("./store/deviceStore");
 const app = (0, express_1.default)();
-app.use((0, cors_1.default)({ origin: config_1.config.corsOrigin }));
+app.use((0, cors_1.default)({
+    origin: (origin, callback) => {
+        callback(null, true);
+    },
+    credentials: true,
+}));
 app.use(express_1.default.json({ limit: '10mb' }));
 app.get('/health', (_req, res) => {
     res.json({ status: 'ok', timestamp: Date.now() });
+});
+function getCookie(req, name) {
+    const cookie = req.headers.cookie || '';
+    const parts = cookie.split(';').map(s => s.trim());
+    for (const p of parts) {
+        if (!p)
+            continue;
+        const idx = p.indexOf('=');
+        if (idx === -1)
+            continue;
+        const k = p.slice(0, idx);
+        const v = p.slice(idx + 1);
+        if (k === name)
+            return decodeURIComponent(v);
+    }
+    return undefined;
+}
+app.use((req, res, next) => {
+    if (req.method === 'OPTIONS')
+        return next();
+    if (req.path.startsWith('/api/auth') || req.path === '/health')
+        return next();
+    const token = getCookie(req, 'admin_token');
+    if (!(0, authStore_1.verifyToken)(token)) {
+        return res.status(401).json({ message: 'unauthorized' });
+    }
+    next();
 });
 app.use('/api/devices', deviceRoutes_1.deviceRouter);
 app.use('/api/config', configRoutes_1.configRouter);

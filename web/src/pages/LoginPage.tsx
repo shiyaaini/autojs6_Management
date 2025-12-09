@@ -8,7 +8,7 @@ export default function LoginPage() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
-  const [status, setStatus] = useState<{ locked: boolean; lockedUntil?: number; remainingAttempts?: number } | null>(null)
+  const [status, setStatus] = useState<{ locked: boolean; lockedUntil?: number; remainingAttempts?: number; authenticated?: boolean } | null>(null)
 
   const loadStatus = useCallback(async () => {
     try {

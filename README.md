@@ -180,3 +180,4 @@ autojs6/
 ---
 
 如需提交到 GitHub，请直接将本仓库推送到：`https://github.com/shiyaaini/autojs6_Management`
+[![Star History Chart](https://api.star-history.com/svg?repos=shiyaaini/autojs6_Management&type=Date)](https://star-history.com/#shiyaaini/autojs6_Management&Date)

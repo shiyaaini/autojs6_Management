@@ -4,6 +4,7 @@ import cors from 'cors';
 import { WebSocketServer } from 'ws';
 import type { WebSocket } from 'ws';
 import { config } from './config';
+import { verifyToken } from './store/authStore';
 import { deviceRouter } from './routes/deviceRoutes';
 import { configRouter } from './routes/configRoutes';
 import { repoRouter } from './routes/repoRoutes';
@@ -13,12 +14,41 @@ import { deviceStore } from './store/deviceStore';
 import type { DeviceToServerMessage, DeviceInfoPayload } from './types';
 
 const app = express();
-app.use(cors({ origin: config.corsOrigin }));
+app.use(cors({
+  origin: (origin, callback) => {
+    callback(null, true);
+  },
+  credentials: true,
+}));
 app.use(express.json({ limit: '10mb' }));
 
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: Date.now() });
 });
+
+function getCookie(req: express.Request, name: string): string | undefined {
+  const cookie = req.headers.cookie || ''
+  const parts = cookie.split(';').map(s => s.trim())
+  for (const p of parts) {
+    if (!p) continue
+    const idx = p.indexOf('=')
+    if (idx === -1) continue
+    const k = p.slice(0, idx)
+    const v = p.slice(idx + 1)
+    if (k === name) return decodeURIComponent(v)
+  }
+  return undefined
+}
+
+app.use((req, res, next) => {
+  if (req.method === 'OPTIONS') return next()
+  if (req.path.startsWith('/api/auth') || req.path === '/health') return next()
+  const token = getCookie(req, 'admin_token')
+  if (!verifyToken(token)) {
+    return res.status(401).json({ message: 'unauthorized' })
+  }
+  next()
+})
 
 app.use('/api/devices', deviceRouter);
 app.use('/api/config', configRouter);

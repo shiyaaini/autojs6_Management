@@ -13,7 +13,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
 }
 
 export async function fetchMatchCode(): Promise<string> {
-  const response = await fetch(`${API_BASE_URL}/api/config/secret`)
+  const response = await fetch(`${API_BASE_URL}/api/config/secret`, { credentials: 'include' })
   const data = await handleResponse<MatchCodeResponse>(response)
   return data.matchCode
 }
@@ -25,6 +25,7 @@ export async function updateMatchCode(matchCode: string): Promise<string> {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ matchCode }),
+    credentials: 'include',
   })
   const data = await handleResponse<MatchCodeResponse>(response)
   return data.matchCode

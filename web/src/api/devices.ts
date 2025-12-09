@@ -76,20 +76,20 @@ async function handleResponse<T>(response: Response): Promise<T> {
 }
 
 export async function fetchDevices(): Promise<Device[]> {
-  const response = await fetch(`${API_BASE_URL}/api/devices`)
+  const response = await fetch(`${API_BASE_URL}/api/devices`, { credentials: 'include' })
   const data = await handleResponse<DeviceListResponse>(response)
   return data.devices
 }
 
 export async function fetchDevice(deviceId: string): Promise<Device> {
-  const response = await fetch(`${API_BASE_URL}/api/devices/${deviceId}`)
+  const response = await fetch(`${API_BASE_URL}/api/devices/${deviceId}`, { credentials: 'include' })
   const data = await handleResponse<DeviceResponse>(response)
   return data.device
 }
 
 export async function fetchDeviceStatusStats(deviceId: string, from: number, to: number): Promise<DeviceStatusStats> {
   const query = `?from=${encodeURIComponent(String(from))}&to=${encodeURIComponent(String(to))}`
-  const response = await fetch(`${API_BASE_URL}/api/devices/${deviceId}/status-stats${query}`)
+  const response = await fetch(`${API_BASE_URL}/api/devices/${deviceId}/status-stats${query}`, { credentials: 'include' })
   const data = await handleResponse<DeviceStatusStatsResponse>(response)
   return data
 }
@@ -97,36 +97,37 @@ export async function fetchDeviceStatusStats(deviceId: string, from: number, to:
 export async function deleteDevice(deviceId: string): Promise<void> {
   const response = await fetch(`${API_BASE_URL}/api/devices/${deviceId}`, {
     method: 'DELETE',
+    credentials: 'include',
   })
   await handleResponse(response)
 }
 
 export async function fetchDeviceScripts(deviceId: string): Promise<ScriptSummary[]> {
-  const response = await fetch(`${API_BASE_URL}/api/devices/${deviceId}/scripts`)
+  const response = await fetch(`${API_BASE_URL}/api/devices/${deviceId}/scripts`, { credentials: 'include' })
   const data = await handleResponse<ScriptListResponse>(response)
   return data.scripts
 }
 
 export async function fetchDeviceApps(deviceId: string): Promise<DeviceAppInfo[]> {
-	const response = await fetch(`${API_BASE_URL}/api/devices/${deviceId}/apps`)
+  const response = await fetch(`${API_BASE_URL}/api/devices/${deviceId}/apps`, { credentials: 'include' })
 	const data = await handleResponse<DeviceAppsResponse>(response)
 	return data.apps
 }
 
 export async function fetchDeviceScriptRuns(deviceId: string, scriptId?: string): Promise<ScriptRunRecord[]> {
   const query = scriptId ? `?scriptId=${encodeURIComponent(scriptId)}` : ''
-  const response = await fetch(`${API_BASE_URL}/api/devices/${deviceId}/script-runs${query}`)
+  const response = await fetch(`${API_BASE_URL}/api/devices/${deviceId}/script-runs${query}`, { credentials: 'include' })
   const data = await handleResponse<ScriptRunResponse>(response)
   return data.runs
 }
 
 export async function requestDeviceScriptList(deviceId: string): Promise<void> {
-  const response = await fetch(`${API_BASE_URL}/api/devices/${deviceId}/request-script-list`, { method: 'POST' })
+  const response = await fetch(`${API_BASE_URL}/api/devices/${deviceId}/request-script-list`, { method: 'POST', credentials: 'include' })
   await handleResponse(response)
 }
 
 export async function requestDeviceApps(deviceId: string): Promise<void> {
-	const response = await fetch(`${API_BASE_URL}/api/devices/${deviceId}/request-apps`, { method: 'POST' })
+  const response = await fetch(`${API_BASE_URL}/api/devices/${deviceId}/request-apps`, { method: 'POST', credentials: 'include' })
 	await handleResponse(response)
 }
 
@@ -140,6 +141,7 @@ export async function createDeviceTimedTask(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(payload),
+    credentials: 'include',
   })
   await handleResponse(response)
 }
@@ -155,6 +157,7 @@ export async function installApkOnDevice(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ apkName, ...(mode ? { mode } : {}) }),
+    credentials: 'include',
   })
   await handleResponse(response)
 }
@@ -166,6 +169,7 @@ export async function sendDeviceAction(deviceId: string, action: DeviceAction): 
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ action }),
+    credentials: 'include',
   })
   await handleResponse(response)
 }
@@ -180,6 +184,7 @@ export async function createDeviceBroadcastTask(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(payload),
+    credentials: 'include',
   })
   await handleResponse(response)
 }
@@ -191,6 +196,7 @@ export async function deleteDeviceScheduledTask(deviceId: string, id: string): P
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ id }),
+    credentials: 'include',
   })
   await handleResponse(response)
 }
@@ -202,6 +208,7 @@ export async function runDeviceScript(deviceId: string, scriptId: string): Promi
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ scriptId }),
+    credentials: 'include',
   })
   await handleResponse(response)
 }
@@ -213,6 +220,7 @@ export async function deleteDeviceScripts(deviceId: string, scriptIds: string[])
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ scriptIds }),
+    credentials: 'include',
   })
   await handleResponse(response)
 }
@@ -224,6 +232,7 @@ export async function updateDeviceRemark(deviceId: string, remark: string): Prom
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ remark }),
+    credentials: 'include',
   })
   const data = await handleResponse<RemarkResponse>(response)
   return data.remark
@@ -239,6 +248,7 @@ export async function pushInlineScriptToDevice(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(options),
+    credentials: 'include',
   })
   await handleResponse(response)
 }
@@ -255,6 +265,7 @@ export async function pushScriptToDevice(deviceId: string, options: {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(options),
+    credentials: 'include',
   })
   await handleResponse(response)
 }
@@ -266,28 +277,29 @@ export async function createDeviceFolder(deviceId: string, folder: string): Prom
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ folder }),
+    credentials: 'include',
   })
   await handleResponse(response)
 }
 
 export async function requestRunningScripts(deviceId: string): Promise<void> {
-  const response = await fetch(`${API_BASE_URL}/api/devices/${deviceId}/request-running`, { method: 'POST' })
+  const response = await fetch(`${API_BASE_URL}/api/devices/${deviceId}/request-running`, { method: 'POST', credentials: 'include' })
   await handleResponse(response)
 }
 
 export async function requestScheduledScripts(deviceId: string): Promise<void> {
-  const response = await fetch(`${API_BASE_URL}/api/devices/${deviceId}/request-scheduled`, { method: 'POST' })
+  const response = await fetch(`${API_BASE_URL}/api/devices/${deviceId}/request-scheduled`, { method: 'POST', credentials: 'include' })
   await handleResponse(response)
 }
 
 export async function fetchRunningScripts(deviceId: string): Promise<RunningScriptInfo[]> {
-  const response = await fetch(`${API_BASE_URL}/api/devices/${deviceId}/running`)
+  const response = await fetch(`${API_BASE_URL}/api/devices/${deviceId}/running`, { credentials: 'include' })
   const data = await handleResponse<RunningScriptsResponse>(response)
   return data.items
 }
 
 export async function fetchScheduledScripts(deviceId: string): Promise<ScheduledScriptInfo[]> {
-  const response = await fetch(`${API_BASE_URL}/api/devices/${deviceId}/scheduled`)
+  const response = await fetch(`${API_BASE_URL}/api/devices/${deviceId}/scheduled`, { credentials: 'include' })
   const data = await handleResponse<ScheduledScriptsResponse>(response)
   return data.items
 }
@@ -299,13 +311,14 @@ export async function requestScriptLog(deviceId: string, scriptId: string, lines
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ scriptId, lines }),
+    credentials: 'include',
   })
   await handleResponse(response)
 }
 
 export async function fetchScriptLog(deviceId: string, scriptId: string, lines = 200): Promise<string[]> {
   const query = `?scriptId=${encodeURIComponent(scriptId)}&lines=${encodeURIComponent(String(lines))}`
-  const response = await fetch(`${API_BASE_URL}/api/devices/${deviceId}/logs${query}`)
+  const response = await fetch(`${API_BASE_URL}/api/devices/${deviceId}/logs${query}`, { credentials: 'include' })
   const data = await handleResponse<LogsResponse>(response)
   return data.lines
 }
@@ -317,13 +330,14 @@ export async function requestScriptContent(deviceId: string, scriptId: string): 
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ scriptId }),
+    credentials: 'include',
   })
   await handleResponse(response)
 }
 
 export async function fetchScriptContent(deviceId: string, scriptId: string): Promise<string> {
   const query = `?scriptId=${encodeURIComponent(scriptId)}`
-  const response = await fetch(`${API_BASE_URL}/api/devices/${deviceId}/script-content${query}`)
+  const response = await fetch(`${API_BASE_URL}/api/devices/${deviceId}/script-content${query}`, { credentials: 'include' })
   const data = await handleResponse<ScriptContentResponse>(response)
   return data.content
 }
@@ -335,6 +349,7 @@ export async function updateDeviceScript(deviceId: string, scriptId: string, con
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ scriptId, content }),
+    credentials: 'include',
   })
   await handleResponse(response)
 }
@@ -346,13 +361,13 @@ export async function fetchRunScriptLog(
   lines = 200,
 ): Promise<string[]> {
   const query = `?scriptId=${encodeURIComponent(scriptId)}&timestamp=${encodeURIComponent(String(timestamp))}&lines=${encodeURIComponent(String(lines))}`
-  const response = await fetch(`${API_BASE_URL}/api/devices/${deviceId}/run-logs${query}`)
+  const response = await fetch(`${API_BASE_URL}/api/devices/${deviceId}/run-logs${query}`, { credentials: 'include' })
   const data = await handleResponse<LogsResponse>(response)
   return data.lines
 }
 
 export async function fetchScreenshot(deviceId: string): Promise<ScreenshotPayload | null> {
-  const response = await fetch(`${API_BASE_URL}/api/devices/${deviceId}/screenshot`)
+  const response = await fetch(`${API_BASE_URL}/api/devices/${deviceId}/screenshot`, { credentials: 'include' })
   const data = await handleResponse<ScreenshotResponse>(response)
   if (!data.screenshot) {
     // 对于没有可用截图的情况，前端将其视为正常的“暂无截图”状态
@@ -371,6 +386,7 @@ export async function requestScreenshot(
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(options ?? {}),
+    credentials: 'include',
   })
   await handleResponse(response)
 }
@@ -382,6 +398,7 @@ export async function sendTouchEvent(deviceId: string, payload: TouchEventPayloa
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(payload),
+    credentials: 'include',
   })
   await handleResponse(response)
 }

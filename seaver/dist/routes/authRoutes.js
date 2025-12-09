@@ -5,9 +5,12 @@ const express_1 = require("express");
 const config_1 = require("../config");
 const authStore_1 = require("../store/authStore");
 exports.authRouter = (0, express_1.Router)();
-exports.authRouter.get('/status', (_req, res) => {
+exports.authRouter.get('/status', (req, res) => {
     const info = (0, authStore_1.getLockInfo)();
-    res.json(info);
+    const cookie = req.headers.cookie || '';
+    const token = cookie.split(';').map(s => s.trim()).find(s => s.startsWith('admin_token='))?.split('=')[1];
+    const authenticated = (0, authStore_1.verifyToken)(token);
+    res.json({ ...info, authenticated });
 });
 exports.authRouter.post('/login', (req, res) => {
     if ((0, authStore_1.isLocked)()) {
@@ -21,6 +24,13 @@ exports.authRouter.post('/login', (req, res) => {
     if (username === config_1.config.adminUsername && password === config_1.config.adminPassword) {
         (0, authStore_1.recordSuccess)();
         const token = (0, authStore_1.issueToken)();
+        res.cookie('admin_token', token, {
+            httpOnly: true,
+            sameSite: 'lax',
+            secure: false,
+            maxAge: 24 * 60 * 60 * 1000,
+            path: '/',
+        });
         return res.json({ token });
     }
     else {
@@ -30,14 +40,15 @@ exports.authRouter.post('/login', (req, res) => {
     }
 });
 exports.authRouter.post('/logout', (req, res) => {
-    const auth = req.headers.authorization || '';
-    const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
+    const cookie = req.headers.cookie || '';
+    const token = cookie.split(';').map(s => s.trim()).find(s => s.startsWith('admin_token='))?.split('=')[1];
     (0, authStore_1.revokeToken)(token);
+    res.clearCookie('admin_token', { path: '/' });
     res.json({ ok: true });
 });
 exports.authRouter.post('/change', (req, res) => {
-    const auth = req.headers.authorization || '';
-    const token = auth.startsWith('Bearer ') ? auth.slice(7) : '';
+    const cookie = req.headers.cookie || '';
+    const token = cookie.split(';').map(s => s.trim()).find(s => s.startsWith('admin_token='))?.split('=')[1];
     if (!(0, authStore_1.verifyToken)(token)) {
         return res.status(401).json({ message: 'unauthorized' });
     }

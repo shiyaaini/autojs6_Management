@@ -21,7 +21,7 @@ export function SettingsPage() {
   const [newMatchCode, setNewMatchCode] = useState<string>('')
   const [savingMatchCode, setSavingMatchCode] = useState(false)
   const [adminToken, setAdminToken] = useState<string | null>(() => localStorage.getItem('adminToken'))
-  const [authStatus, setAuthStatus] = useState<{ locked: boolean; lockedUntil?: number; remainingAttempts?: number } | null>(null)
+  const [authStatus, setAuthStatus] = useState<{ locked: boolean; lockedUntil?: number; remainingAttempts?: number; authenticated?: boolean } | null>(null)
   const [loginUsername, setLoginUsername] = useState('')
   const [loginPassword, setLoginPassword] = useState('')
   const [loginLoading, setLoginLoading] = useState(false)
@@ -126,7 +126,7 @@ export function SettingsPage() {
   const handleLogout = useCallback(async () => {
     try {
       const mod = await import('../api/auth')
-      if (adminToken) await mod.logout(adminToken)
+      await mod.logout()
     } catch {}
     localStorage.removeItem('adminToken')
     setAdminToken(null)
@@ -148,7 +148,7 @@ export function SettingsPage() {
     setChangeLoading(true)
     try {
       const mod = await import('../api/auth')
-      await mod.changeAdminCredentials(adminToken, u, p, c)
+      await mod.changeAdminCredentials(u, p, c)
       setChangeUsername('')
       setChangePassword('')
       setCurrentPassword('')

@@ -30,7 +30,7 @@ async function handleResponse<T>(response: Response): Promise<T> {
 }
 
 export async function fetchApkList(): Promise<ApkItem[]> {
-  const response = await fetch(`${API_BASE_URL}/api/apk/list`)
+  const response = await fetch(`${API_BASE_URL}/api/apk/list`, { credentials: 'include' })
   const data = await handleResponse<ApkListResponse>(response)
   return data.items
 }
@@ -43,6 +43,7 @@ export async function uploadApk(file: File): Promise<ApkItem> {
       'Content-Type': 'application/octet-stream',
     },
     body: file,
+    credentials: 'include',
   })
   const data = await handleResponse<ApkUploadResponse>(response)
   return data.item

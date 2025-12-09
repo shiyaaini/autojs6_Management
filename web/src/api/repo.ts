@@ -25,14 +25,14 @@ async function handleResponse<T>(response: Response): Promise<T> {
 }
 
 export async function fetchRepoScripts(): Promise<RepoScriptItem[]> {
-  const response = await fetch(`${API_BASE_URL}/api/repo/scripts`)
+  const response = await fetch(`${API_BASE_URL}/api/repo/scripts`, { credentials: 'include' })
   const data = await handleResponse<RepoListResponse>(response)
   return data.scripts
 }
 
 export async function fetchRepoScriptContent(path: string): Promise<RepoContentResponse> {
   const url = `${API_BASE_URL}/api/repo/scripts/content?path=${encodeURIComponent(path)}`
-  const response = await fetch(url)
+  const response = await fetch(url, { credentials: 'include' })
   return handleResponse<RepoContentResponse>(response)
 }
 
@@ -43,12 +43,13 @@ export async function updateRepoScriptContent(path: string, content: string): Pr
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ path, content }),
+    credentials: 'include',
   })
   return handleResponse<RepoContentResponse>(response)
 }
 
 export async function deleteRepoScript(path: string): Promise<void> {
   const url = `${API_BASE_URL}/api/repo/scripts/content?path=${encodeURIComponent(path)}`
-  const response = await fetch(url, { method: 'DELETE' })
+  const response = await fetch(url, { method: 'DELETE', credentials: 'include' })
   await handleResponse(response)
 }
