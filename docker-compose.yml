@@ -1,0 +1,32 @@
+services:
+  seaver:
+    build:
+      context: ./seaver
+      args:
+        NODE_BUILDER_REF: docker.m.daocloud.io/library/node:18-bullseye-slim
+        NODE_RUNNER_REF: docker.m.daocloud.io/library/node:18-bullseye-slim
+    container_name: autojs6-seaver
+    environment:
+      - PORT=4000
+      - CORS_ORIGIN=*
+      - MATCH_CODE=autojs6
+    volumes:
+      - seaver_data:/app/data
+      - ./seaver/config.yaml:/app/config.yaml
+      - ./seaver/all_scripts:/app/all_scripts
+      - ./seaver/all_apk:/app/all_apk
+    ports:
+      - "4000:4000"
+  web:
+    build:
+      context: ./web
+      args:
+        NODE_BUILDER_REF: docker.m.daocloud.io/library/node:22-alpine
+        NGINX_BASE_REF: docker.m.daocloud.io/library/nginx:alpine
+    container_name: autojs6-web
+    depends_on:
+      - seaver
+    ports:
+      - "8080:80"
+volumes:
+  seaver_data:

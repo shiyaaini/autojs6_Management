@@ -1,0 +1,74 @@
+.app-layout {
+  min-height: 100vh;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #001529;
+  padding: 0 24px;
+}
+
+.app-title {
+  color: #fff !important;
+  margin: 0 !important;
+}
+
+.app-content {
+  padding: 24px;
+  background: #f5f5f5;
+}
+
+.app-footer {
+  text-align: center;
+}
+
+.page-card {
+  background: #fff;
+  padding: 16px;
+  border-radius: 8px;
+}
+
+/* Remote screen styles */
+.remote-screen-wrapper {
+  width: 100%;
+  overflow: auto;
+}
+.remote-screen-board {
+  position: relative;
+  display: inline-block;
+  max-width: 100%;
+}
+.remote-screen-image {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  user-select: none;
+}
+.remote-screen-overlay {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.35);
+  color: #fff;
+  pointer-events: none;
+}
+
+/* Responsive paddings */
+@media (max-width: 768px) {
+  .app-header {
+    padding: 0 12px;
+  }
+  .app-content {
+    padding: 12px;
+  }
+  .page-card {
+    padding: 12px;
+  }
+}
